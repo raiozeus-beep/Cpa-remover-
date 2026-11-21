@@ -1,0 +1,28 @@
+name: Build APK
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extrair projeto
+        run: unzip -q c2pa-remover.zip
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.7
+      - name: Compilar
+        working-directory: c2pa-remover
+        run: gradle assembleRelease
+      - uses: actions/upload-artifact@v4
+        with:
+          name: C2PARemover-apk
+          path: c2pa-remover/app/build/outputs/apk/release/*.apk
